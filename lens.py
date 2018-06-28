@@ -9,7 +9,7 @@ Created on Mon Feb  5 15:24:22 2018
 import numpy as np
 from scipy.integrate import dblquad,quad
 
-ell_lens_max = 100
+ell_lens_max = 1000
 integral_ell_max = 3000
 
 #noise params
@@ -21,12 +21,15 @@ T_CMB = 2.728E6
 #D_T_arcmin = 27.0
 #Almost perfect noise [\mu K*arcmin]
 D_T_arcmin = 1.0
-#Planck noise [\mu K*rad]
+
+#noise [\mu K*rad]
 D_T = D_T_arcmin / arcmin_to_radian
+
 #Planck FWHM of the beam [arcmin]
 #fwmh_arcmin = 7.0
 #Almost perfect FWHM of the beam [arcmin]
 fwmh_arcmin = 4.0
+
 fwmh = fwmh_arcmin * arcmin_to_radian
 
 
@@ -60,7 +63,6 @@ np.savetxt('try2.dat', np.c_[ell,N_TT], fmt='%1.4e')
 """
 
 #signal + noise
-#TT_unlensed = TT_unlensed + N_TT
 TT_lensed = TT_lensed + N_TT
 
 """
@@ -75,16 +77,13 @@ L_array = np.zeros(aL_max-aL_min+1)
 dtheta = 0.02
 dl1 = 1
 
-for aL in range(aL_min,aL_max+1,10): #list of Aa[aL]
+for aL in range(aL_min,aL_max+1,1): #list of Aa[aL]
     L_array[aL-2] = aL
     for theta in np.arange(0,2*np.pi,dtheta): #\theta integral
         for l1 in range(2,integral_ell_max): #ell_1 integral
             l2 = int(np.sqrt(l1**2+aL**2-2*aL*l1*np.cos(theta))) #value of l2 from triangle relation
             s = (aL+l1+l2)/2.0
-            #if( (max(aL,l1,l2)<s) & (l2 < integral_ell_max) ): #triangle inequality & l2 < integral_ell_max
-            #if(max(aL,l1,l2)<s): #triangle inequality
-            #if(l2 < integral_ell_max):
-            if(1<2):
+            if( (max(aL,l1,l2)<s) & (l2 < integral_ell_max) ): #triangle inequality & l2 < integral_ell_max 
                 tmp = TT_unlensed[l1-2]*(aL*l1*np.cos(theta)) + TT_unlensed[l2-2]*((aL**2)-aL*l1*np.cos(theta))
                 tmp = tmp**2
                 tmp = tmp/2.0/TT_lensed[l1-2]/TT_lensed[l2-2]
@@ -93,7 +92,7 @@ for aL in range(aL_min,aL_max+1,10): #list of Aa[aL]
     Aa[aL-2] = aL*aL/Aa[aL-2]
     print aL,Aa[aL-2]
 
-np.savetxt('noise.dat', np.c_[L_array,Aa], fmt='%1.4e')
+np.savetxt('ideal_tt_noise.dat', np.c_[L_array,Aa], fmt='%1.4e')
 
 
 
