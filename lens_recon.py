@@ -234,9 +234,18 @@ L_min = 10
 L_max = ell_lens_max
 L_array = np.zeros(L_max-L_min+1)
 Ntt_array = np.zeros(L_max-L_min+1)
+Nte_array = np.zeros(L_max-L_min+1)
+Ntb_array = np.zeros(L_max-L_min+1)
+Nee_array = np.zeros(L_max-L_min+1)
+Neb_array = np.zeros(L_max-L_min+1)
 for L in range(L_min,L_max+1,1): #list of Aa[L]
     L_array[L-L_min] = L
     Ntt_array[L-L_min] = Aa(L,1) #N_tt
+    Nte_array[L-L_min] = Aa(L,2) #N_te
+    Ntb_array[L-L_min] = Aa(L,3) #N_tb
+    Nee_array[L-L_min] = Aa(L,4) #N_ee
+    Neb_array[L-L_min] = Aa(L,5) #N_eb
 
-np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array], fmt='%1.4e')
+
+np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
     
