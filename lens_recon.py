@@ -10,8 +10,8 @@ import numpy as np
 from scipy.integrate import dblquad,quad
 from scipy import interpolate
 
-ell_lens_max = 1000
-integral_ell_max = 3000
+ell_lens_max = 100
+integral_ell_max = 300
 tol = 1.0e-9
 
 #noise params
@@ -42,6 +42,8 @@ fwmh = fwmh_arcmin * arcmin_to_radian
 unlensed_spectra_filename = './data/lcdm_totCls.dat'
 lensed_spectra_filename = './data/lcdm_lensedtotCls.dat'
 lens_potential_filename = './data/lcdm_lenspotentialCls.dat'
+
+output_filename = 'new_planck_tt_noise.dat'
 
 #unlensed spectra
 #un_Cl is ranged in: L, TT, EE, BB, TE
@@ -238,7 +240,11 @@ Nte_array = np.zeros(L_max-L_min+1)
 Ntb_array = np.zeros(L_max-L_min+1)
 Nee_array = np.zeros(L_max-L_min+1)
 Neb_array = np.zeros(L_max-L_min+1)
+op_row = np.zeros(6)
+
+
 for L in range(L_min,L_max+1,1): #list of Aa[L]
+    op_data = open(output_filename,'a')
     print('L=',L)
     L_array[L-L_min] = L
     Ntt_array[L-L_min] = Aa(L,1) #N_tt
@@ -246,7 +252,14 @@ for L in range(L_min,L_max+1,1): #list of Aa[L]
     Ntb_array[L-L_min] = Aa(L,3) #N_tb
     Nee_array[L-L_min] = Aa(L,4) #N_ee
     Neb_array[L-L_min] = Aa(L,5) #N_eb
+    op_row[0] = L_array[L-L_min]
+    op_row[1] = Ntt_array[L-L_min]
+    op_row[2] = Nte_array[L-L_min]
+    op_row[3] = Ntb_array[L-L_min]
+    op_row[4] = Nee_array[L-L_min]
+    op_row[5] = Neb_array[L-L_min]
+    np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
+    op_data.close()
 
-
-np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
+#np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
     
