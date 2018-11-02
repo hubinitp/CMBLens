@@ -92,6 +92,27 @@ le_Cl[:,1] = le_Cl[:,1] + N_TT
 le_Cl[:,2] = le_Cl[:,2] + N_EE
 le_Cl[:,3] = le_Cl[:,3] + N_BB
 
+#Perform the interpolation, the interpolation range may outof bound of sampling points
+#interpolate the unlensed tt, if out of the sampling range, we set to zero
+#noise has been added
+Cl_tt = interpolate.interp1d(un_Cl[:,0],un_Cl[:,1],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed ee
+Cl_ee = interpolate.interp1d(un_Cl[:,0],un_Cl[:,2],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed bb
+Cl_bb = interpolate.interp1d(un_Cl[:,0],un_Cl[:,3],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed te
+Cl_te = interpolate.interp1d(un_Cl[:,0],un_Cl[:,4],bounds_error=False,kind='linear',fill_value=tol)
+
+#Perform the interpolation, the interpolation range may outof bound of sampling points
+#interpolate the lensed tt, if out of the sampling range, we set to zero
+lCl_tt = interpolate.interp1d(le_Cl[:,0],le_Cl[:,1],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed ee
+lCl_ee = interpolate.interp1d(le_Cl[:,0],le_Cl[:,2],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed bb
+lCl_bb = interpolate.interp1d(le_Cl[:,0],le_Cl[:,3],bounds_error=False,kind='linear',fill_value=tol)
+#interpolate the unlensed te
+lCl_te = interpolate.interp1d(le_Cl[:,0],le_Cl[:,4],bounds_error=False,kind='linear',fill_value=tol)
+
 #define f_a function
 def fa(a,l1,l2,cos_theta,sin_phi12):
     '''
@@ -121,17 +142,6 @@ def fa(a,l1,l2,cos_theta,sin_phi12):
     cos_2phi = 2*sin_phi*cos_phi
     sin_2phi = 2*cos_phi**2-1.0
 
-    #Perform the interpolation, the interpolation range may outof bound of sampling points
-    #interpolate the unlensed tt, if out of the sampling range, we set to zero
-    #noise has been added
-    Cl_tt = interpolate.interp1d(un_Cl[:,0],un_Cl[:,1],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed ee
-    Cl_ee = interpolate.interp1d(un_Cl[:,0],un_Cl[:,2],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed bb
-    Cl_bb = interpolate.interp1d(un_Cl[:,0],un_Cl[:,3],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed te
-    Cl_te = interpolate.interp1d(un_Cl[:,0],un_Cl[:,4],bounds_error=False,kind='linear',fill_value=tol)
-
     if(a == 1):   #TT
         fa = Cl_tt(l1)*(L_dot_l1)+Cl_tt(l2)*(L_dot_l2)
     elif(a == 2): #TE
@@ -157,16 +167,6 @@ def cf(a,l1,l2,cos_theta,sin_phi12):
     cos_theta: (float) theta is the azimuthal angle btw l1 and l2,hence theta \in (0,pi)
     sin_phi12: (float) an indicator of phi_12
     '''
-    
-    #Perform the interpolation, the interpolation range may outof bound of sampling points
-    #interpolate the lensed tt, if out of the sampling range, we set to zero
-    lCl_tt = interpolate.interp1d(le_Cl[:,0],le_Cl[:,1],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed ee
-    lCl_ee = interpolate.interp1d(le_Cl[:,0],le_Cl[:,2],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed bb
-    lCl_bb = interpolate.interp1d(le_Cl[:,0],le_Cl[:,3],bounds_error=False,kind='linear',fill_value=tol)
-    #interpolate the unlensed te
-    lCl_te = interpolate.interp1d(le_Cl[:,0],le_Cl[:,4],bounds_error=False,kind='linear',fill_value=tol)
 
     if(a == 1):   #TT
         cf = fa(a,l1,l2,cos_theta,sin_phi12)/2.0/lCl_tt(l1)/lCl_tt(l2)
