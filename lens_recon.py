@@ -239,7 +239,7 @@ Ntb_array = np.zeros(L_max-L_min+1)
 Nee_array = np.zeros(L_max-L_min+1)
 Neb_array = np.zeros(L_max-L_min+1)
 for L in range(L_min,L_max+1,1): #list of Aa[L]
-	print('L=',L)
+    print('L=',L)
     L_array[L-L_min] = L
     Ntt_array[L-L_min] = Aa(L,1) #N_tt
     Nte_array[L-L_min] = Aa(L,2) #N_te
