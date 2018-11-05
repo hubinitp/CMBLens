@@ -10,8 +10,8 @@ import numpy as np
 from scipy.integrate import dblquad,quad
 from scipy import interpolate
 
-ell_lens_max = 100
-integral_ell_max = 300
+ell_lens_max = 1000
+integral_ell_max = 1500
 tol = 1.0e-9
 
 #noise params
