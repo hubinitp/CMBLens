@@ -232,7 +232,7 @@ def Aa(L,a):
 
             sin_phi12 = -np.sin(phi1)
             
-            cos_theta = 1.0 #bh: debug costheta
+            cos_theta = 0.5 #bh: debug costheta
             
             s = (L+l1+l2)/2.0
             if(max(L,l1,l2)<s): #triangle inequality
