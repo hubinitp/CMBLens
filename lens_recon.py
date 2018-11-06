@@ -15,7 +15,7 @@ import multiprocessing
 ell_lens_min = 2
 ell_lens_max = 1000
 integral_ell_min = 2
-integral_ell_max = 3000
+integral_ell_max = 1500
 tol = 1.0e-9
 
 #noise params
@@ -231,6 +231,9 @@ def Aa(L,a):
                 cos_theta = np.cos(phi1)*cos_tphi2+np.sin(phi1)*sin_tphi2
 
             sin_phi12 = -np.sin(phi1)
+            
+            cos_theta = 1.0 #bh: debug costheta
+            
             s = (L+l1+l2)/2.0
             if(max(L,l1,l2)<s): #triangle inequality
                 tmp = fa(a,l1,l2,cos_theta,sin_phi12)*cf(a,l1,l2,cos_theta,sin_phi12)
@@ -293,7 +296,7 @@ def NoiseOutPut(L):
 #parallel the Noise output part
 num_cores = multiprocessing.cpu_count()
 
-results = Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(L) for L in l_range)
+Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(L) for L in l_range)
 
 #np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
     
