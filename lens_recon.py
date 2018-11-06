@@ -217,7 +217,8 @@ def Aa(L,a):
             else:
                 cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
             '''
-            cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
+            #cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
+            cos_tphi2 = (L-l1*np.cos(phi1))/np.sqrt(l1**2+L**2-2*L*l1*np.cos(phi1))
             
             if(abs(cos_tphi2)>1):
                 print('Aa: cos_tphi2 is larger than unity!')
@@ -231,8 +232,6 @@ def Aa(L,a):
                 cos_theta = np.cos(phi1)*cos_tphi2+np.sin(phi1)*sin_tphi2
 
             sin_phi12 = -np.sin(phi1)
-            
-            cos_theta = 0.5 #bh: debug costheta
             
             s = (L+l1+l2)/2.0
             if(max(L,l1,l2)<s): #triangle inequality
