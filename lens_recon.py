@@ -218,7 +218,7 @@ def Aa(L,a):
                 cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
             '''
             #cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
-            cos_tphi2 = (L-l1*np.cos(phi1))/np.sqrt(l1**2+L**2-2*L*l1*np.cos(phi1))
+            cos_tphi2 = (L-l1*np.cos(phi1))/l2
             
             if(abs(cos_tphi2)>1):
                 print('Aa: cos_tphi2 is larger than unity!')
