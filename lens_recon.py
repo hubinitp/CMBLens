@@ -9,8 +9,12 @@ Hu-Okamoto quatratic estimator
 import numpy as np
 from scipy.integrate import dblquad,quad
 from scipy import interpolate
+from joblib import Parallel, delayed
+import multiprocessing
 
+ell_lens_min = 2
 ell_lens_max = 1000
+integral_ell_min = 2
 integral_ell_max = 1500
 tol = 1.0e-9
 
@@ -43,7 +47,7 @@ unlensed_spectra_filename = './data/lcdm_totCls.dat'
 lensed_spectra_filename = './data/lcdm_lensedtotCls.dat'
 lens_potential_filename = './data/lcdm_lenspotentialCls.dat'
 
-output_filename = 'new_planck_tt_noise.dat'
+output_filename = 'new_planck_tt_noise2.dat'
 
 #unlensed spectra
 #un_Cl is ranged in: L, TT, EE, BB, TE
@@ -93,6 +97,8 @@ np.savetxt('try5.dat', np.c_[le_Cl[:,0],N_TT,N_EE], fmt='%1.4e')
 le_Cl[:,1] = le_Cl[:,1] + N_TT
 le_Cl[:,2] = le_Cl[:,2] + N_EE
 le_Cl[:,3] = le_Cl[:,3] + N_BB
+
+#np.savetxt('try6.dat', le_Cl, fmt='%1.4e')
 
 #Perform the interpolation, the interpolation range may outof bound of sampling points
 #interpolate the unlensed tt, if out of the sampling range, we set to zero
@@ -198,7 +204,7 @@ def Aa(L,a):
     dphi1 = 0.02
     dl1 = 1
     Aa = 0.0
-    for l1 in range(2,integral_ell_max): #ell_1 integral
+    for l1 in range(integral_ell_min,integral_ell_max): #ell_1 integral
         for phi1 in np.arange(0,2*np.pi,dphi1): #phi1 integral
             l2 = int(np.sqrt(l1**2+L**2-2*L*l1*np.cos(phi1))) #value of l2 from triangle relation
             
@@ -216,7 +222,9 @@ def Aa(L,a):
             if(abs(cos_tphi2)>1):
                 print('Aa: cos_tphi2 is larger than unity!')
                 quit()
+            
             sin_tphi2 = np.sqrt(1-cos_tphi2**2)
+            
             if((phi1>=0) and (phi1<=np.pi)):
                 cos_theta = np.cos(phi1)*cos_tphi2-np.sin(phi1)*sin_tphi2
             else:
@@ -232,7 +240,7 @@ def Aa(L,a):
     return Aa
 
 #N_aa=Aa term, for test
-L_min = 10
+L_min = ell_lens_min
 L_max = ell_lens_max
 L_array = np.zeros(L_max-L_min+1)
 Ntt_array = np.zeros(L_max-L_min+1)
@@ -242,7 +250,7 @@ Nee_array = np.zeros(L_max-L_min+1)
 Neb_array = np.zeros(L_max-L_min+1)
 op_row = np.zeros(6)
 
-
+'''
 for L in range(L_min,L_max+1,1): #list of Aa[L]
     op_data = open(output_filename,'a')
     print('L=',L)
@@ -260,6 +268,31 @@ for L in range(L_min,L_max+1,1): #list of Aa[L]
     op_row[5] = Neb_array[L-L_min]
     np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
     op_data.close()
+'''
+
+l_range = range(L_min,L_max+1,1)
+def NoiseOutPut(L):
+    op_data = open(output_filename,'a')
+    print('L=',L)
+    L_array[L-L_min] = L
+    Ntt_array[L-L_min] = Aa(L,1) #N_tt
+    Nte_array[L-L_min] = Aa(L,2) #N_te
+    Ntb_array[L-L_min] = Aa(L,3) #N_tb
+    Nee_array[L-L_min] = Aa(L,4) #N_ee
+    Neb_array[L-L_min] = Aa(L,5) #N_eb
+    op_row[0] = L_array[L-L_min]
+    op_row[1] = Ntt_array[L-L_min]
+    op_row[2] = Nte_array[L-L_min]
+    op_row[3] = Ntb_array[L-L_min]
+    op_row[4] = Nee_array[L-L_min]
+    op_row[5] = Neb_array[L-L_min]
+    np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
+    op_data.close()
+    return None
+
+num_cores = multiprocessing.cpu_count()
+
+results = Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(L) for L in l_range)
 
 #np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
     
