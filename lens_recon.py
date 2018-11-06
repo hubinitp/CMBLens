@@ -131,6 +131,8 @@ def fa(a,l1,l2,cos_theta,sin_phi12):
     sin_phi12: (float) an indicator of phi_12
     '''
     
+    cos_theta = 0.99 #bh: debug costheta
+    
     L = int(np.sqrt(l1**2+l2**2+2*l1*l2*cos_theta)) #value of L from triangle relation
     L_dot_l1 = l1**2+l1*l2*cos_theta
     L_dot_l2 = l2**2+l1*l2*cos_theta
@@ -217,8 +219,7 @@ def Aa(L,a):
             else:
                 cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
             '''
-            #cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
-            cos_tphi2 = (L-l1*np.cos(phi1))/l2
+            cos_tphi2 = (l2**2+L**2-l1**2)/2/L/l2
             
             if(abs(cos_tphi2)>1):
                 print('Aa: cos_tphi2 is larger than unity!')
