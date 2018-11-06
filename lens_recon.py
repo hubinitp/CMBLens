@@ -15,7 +15,7 @@ import multiprocessing
 ell_lens_min = 2
 ell_lens_max = 1000
 integral_ell_min = 2
-integral_ell_max = 1500
+integral_ell_max = 3000
 tol = 1.0e-9
 
 #noise params
@@ -290,6 +290,7 @@ def NoiseOutPut(L):
     op_data.close()
     return None
 
+#parallel the Noise output part
 num_cores = multiprocessing.cpu_count()
 
 results = Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(L) for L in l_range)
