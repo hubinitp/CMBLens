@@ -131,8 +131,6 @@ def fa(a,l1,l2,cos_theta,sin_phi12):
     sin_phi12: (float) an indicator of phi_12
     '''
     
-    cos_theta = 0.99 #bh: debug costheta
-    
     L = int(np.sqrt(l1**2+l2**2+2*l1*l2*cos_theta)) #value of L from triangle relation
     L_dot_l1 = l1**2+l1*l2*cos_theta
     L_dot_l2 = l2**2+l1*l2*cos_theta
@@ -235,10 +233,20 @@ def Aa(L,a):
             sin_phi12 = -np.sin(phi1)
             
             s = (L+l1+l2)/2.0
+            
+            '''
             if(max(L,l1,l2)<s): #triangle inequality
                 tmp = fa(a,l1,l2,cos_theta,sin_phi12)*cf(a,l1,l2,cos_theta,sin_phi12)
                 tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
                 Aa = Aa + tmp
+            else:
+                print('Aa: not satisfy triangle inequality!')
+            '''
+            
+            tmp = fa(a,l1,l2,cos_theta,sin_phi12)*cf(a,l1,l2,cos_theta,sin_phi12)
+            tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
+            Aa = Aa + tmp
+    
     Aa = L*L/Aa
     return Aa
 
