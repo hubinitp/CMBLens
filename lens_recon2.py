@@ -224,29 +224,38 @@ def Aa(L,a):
     for l1 in range(integral_ell_min,integral_ell_max): #ell_1 integral
         for phi1 in np.arange(0,2*np.pi,dphi1): #phi1 integral
             
-            '''
-            s = (L+l1+l2)/2.0
-            if(max(L,l1,l2)<s): #triangle inequality
-                tmp = fa(a,l1,l2,cos_theta,sin_phi12)*cf(a,l1,l2,cos_theta,sin_phi12)
-                tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
-                Aa = Aa + tmp
+            l2 = int(np.sqrt(L**2+l1**2-2*l1*L*cos_phi1)) #value of l2 from triangle relation
+            
+            if((l2==0) or (l2==1)):
+                tmp = 0.0 #avoid these multiples
             else:
-                print('Aa: not satisfy triangle inequality!')
-            '''
-            
-            if((phi1>=0) and (phi1<np.pi)):
-                sgn_phi12 = -1
-            else:
-                sgn_phi12 = 1
-            
-            cos_phi1 = np.cos(phi1)
-            
-            tmp = fa(a,l1,L,cos_phi1,sgn_phi12)*cf(a,l1,L,cos_phi1,sgn_phi12)
-            tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
+                s = (L+l1+l2)/2.0
+                if(max(L,l1,l2)<s): #triangle inequality
+                    if((phi1>=0) and (phi1<np.pi)):
+                        sgn_phi12 = -1
+                    else:
+                        sgn_phi12 = 1
+                    cos_phi1 = np.cos(phi1)
+                    tmp = fa(a,l1,L,cos_phi1,sgn_phi12)*cf(a,l1,L,cos_phi1,sgn_phi12)
+                    tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
+                else: #unsatisfy triangle inequality
+                    tmp = 0.0
             Aa = Aa + tmp
     
     Aa = L*L/Aa
     return Aa
+
+
+    '''
+    s = (L+l1+l2)/2.0
+    if(max(L,l1,l2)<s): #triangle inequality
+    tmp = fa(a,l1,l2,cos_theta,sin_phi12)*cf(a,l1,l2,cos_theta,sin_phi12)
+    tmp = tmp * l1 * dphi1 * dl1/4/np.pi/np.pi
+    Aa = Aa + tmp
+    else:
+    print('Aa: not satisfy triangle inequality!')
+    '''
+
 
 #N_aa=Aa term, for test
 L_min = ell_lens_min
