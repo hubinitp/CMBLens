@@ -224,7 +224,7 @@ def Aa(L,a):
     for l1 in range(integral_ell_min,integral_ell_max): #ell_1 integral
         for phi1 in np.arange(0,2*np.pi,dphi1): #phi1 integral
             
-            l2 = int(np.sqrt(L**2+l1**2-2*l1*L*cos_phi1)) #value of l2 from triangle relation
+            l2 = int(np.sqrt(L**2+l1**2-2*l1*L*np.cos(phi1))) #value of l2 from triangle relation
             
             if((l2==0) or (l2==1)):
                 tmp = 0.0 #avoid these multiples
