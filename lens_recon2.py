@@ -82,10 +82,10 @@ un_Cl[:,2] = un_Cl[:,2]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #EE
 un_Cl[:,3] = un_Cl[:,3]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #BB
 un_Cl[:,4] = un_Cl[:,4]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #TE
 
-le_Cl[:,1] = le_Cl[:,1]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi
-le_Cl[:,2] = le_Cl[:,2]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi
-le_Cl[:,3] = le_Cl[:,3]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi
-le_Cl[:,4] = le_Cl[:,4]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi
+le_Cl[:,1] = le_Cl[:,1]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #TT
+le_Cl[:,2] = le_Cl[:,2]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #EE
+le_Cl[:,3] = le_Cl[:,3]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #BB
+le_Cl[:,4] = le_Cl[:,4]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #TE
 
 '''
 np.savetxt('try3.dat', un_Cl, fmt='%1.4e')
@@ -133,7 +133,8 @@ def fa(ea,el1,eL,ecos_phi1,esgn_phi12):
     
     el2 = int(np.sqrt(eL**2+el1**2-2*el1*eL*ecos_phi1)) #value of l2 from triangle relation
     if((el2==0) or (el2==1)):
-        el2 = 2 #bh: brutal forcely set to 2
+        fa = 0.0 #avoid these multiples
+        return fa
     L_dot_l1 = eL*el1*ecos_phi1
     L_dot_l2 = eL**2-L_dot_l1
     
@@ -188,16 +189,17 @@ def cf(xa,xl1,xL,xcos_phi1,xsgn_phi12):
     xsgn_phi21 = -xsgn_phi12
     xl2 = int(np.sqrt(xL**2+xl1**2-2*xl1*xL*xcos_phi1)) #value of l2 from triangle relation
     if((xl2==0) or (xl2==1)):
-        xl2 = 2 #bh: brutal forcelly set to 2
+        cf = 0.0 #avoid these multiples
+        return cf
     xcos_phi2 = (xl2**2+xL**2-xl1**2)/2./xl2/xL
     
     if(xa == 1):   #TT
         cf = fa(xa,xl1,xL,xcos_phi1,xsgn_phi12)/2.0/lCl_tt(xl1)/lCl_tt(xl2)
     elif(xa == 2): #TE
         cf = fa(xa,xl1,xL,xcos_phi1,xsgn_phi12)*lCl_ee(xl1)*lCl_tt(xl2) - fa(xa,xl2,xL,xcos_phi2,xsgn_phi21)*lCl_te(xl1)*lCl_te(xl2)
-        tmp = lCl_tt(xl1)*lCl_ee(xl2)*lCl_ee(xl1)*lCl_tt(xl2)
-        tmp = tmp - (lCl_te(xl1)*lCl_te(xl2))**2
-        cf = cf/tmp
+        tmp2 = lCl_tt(xl1)*lCl_ee(xl2)*lCl_ee(xl1)*lCl_tt(xl2)
+        tmp2 = tmp2 - (lCl_te(xl1)*lCl_te(xl2))**2
+        cf = cf/tmp2
     elif(xa == 3): #TB
         cf = fa(xa,xl1,xL,xcos_phi1,xsgn_phi12)/lCl_tt(xl1)/lCl_bb(xl2)
     elif(xa == 4): #EE
@@ -256,51 +258,29 @@ Ntb_array = np.zeros(L_max-L_min+1)
 Nee_array = np.zeros(L_max-L_min+1)
 Neb_array = np.zeros(L_max-L_min+1)
 op_row = np.zeros(6)
-
-'''
-for L in range(L_min,L_max+1,1): #list of Aa[L]
-    op_data = open(output_filename,'a')
-    print('L=',L)
-    L_array[L-L_min] = L
-    Ntt_array[L-L_min] = Aa(L,1) #N_tt
-    Nte_array[L-L_min] = Aa(L,2) #N_te
-    Ntb_array[L-L_min] = Aa(L,3) #N_tb
-    Nee_array[L-L_min] = Aa(L,4) #N_ee
-    Neb_array[L-L_min] = Aa(L,5) #N_eb
-    op_row[0] = L_array[L-L_min]
-    op_row[1] = Ntt_array[L-L_min]
-    op_row[2] = Nte_array[L-L_min]
-    op_row[3] = Ntb_array[L-L_min]
-    op_row[4] = Nee_array[L-L_min]
-    op_row[5] = Neb_array[L-L_min]
-    np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
-    op_data.close()
-'''
-
 l_range = range(L_min,L_max+1,1)
-def NoiseOutPut(L):
+
+def NoiseOutPut(yL):
     op_data = open(output_filename,'a')
-    print('L=',L)
-    L_array[L-L_min] = L
-    Ntt_array[L-L_min] = Aa(L,1) #N_tt
-    Nte_array[L-L_min] = Aa(L,2) #N_te
-    Ntb_array[L-L_min] = Aa(L,3) #N_tb
-    Nee_array[L-L_min] = Aa(L,4) #N_ee
-    Neb_array[L-L_min] = Aa(L,5) #N_eb
-    op_row[0] = L_array[L-L_min]
-    op_row[1] = Ntt_array[L-L_min]
-    op_row[2] = Nte_array[L-L_min]
-    op_row[3] = Ntb_array[L-L_min]
-    op_row[4] = Nee_array[L-L_min]
-    op_row[5] = Neb_array[L-L_min]
+    print('L=',yL)
+    L_array[yL-L_min] = yL
+    Ntt_array[yL-L_min] = Aa(yL,1) #N_tt
+    Nte_array[yL-L_min] = Aa(yL,2) #N_te
+    Ntb_array[yL-L_min] = Aa(yL,3) #N_tb
+    Nee_array[yL-L_min] = Aa(yL,4) #N_ee
+    Neb_array[yL-L_min] = Aa(yL,5) #N_eb
+    op_row[0] = L_array[yL-L_min]
+    op_row[1] = Ntt_array[yL-L_min]
+    op_row[2] = Nte_array[yL-L_min]
+    op_row[3] = Ntb_array[yL-L_min]
+    op_row[4] = Nee_array[yL-L_min]
+    op_row[5] = Neb_array[yL-L_min]
     np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
     op_data.close()
     return None
 
 #parallel the Noise output part
 num_cores = multiprocessing.cpu_count()
+Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(zL) for zL in l_range)
 
-Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(L) for L in l_range)
-
-#np.savetxt('new_planck_tt_noise.dat', np.c_[L_array,Ntt_array,Nte_array,Ntb_array,Nee_array,Neb_array], fmt='%1.4e')
-    
+exit()
