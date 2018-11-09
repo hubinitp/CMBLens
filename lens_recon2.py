@@ -134,6 +134,7 @@ def fa(ea,el1,eL,ecos_phi1,esgn_phi12):
     '''
     
     el2 = int(np.sqrt(eL**2+el1**2-2*el1*eL*ecos_phi1)) #value of l2 from triangle relation
+    gl2 = np.sqrt(eL**2+el1**2-2*el1*eL*ecos_phi1) #float l2
     if((el2==0) or (el2==1)):
         fa = 0.0 #avoid these multiples
         return fa
@@ -149,7 +150,7 @@ def fa(ea,el1,eL,ecos_phi1,esgn_phi12):
     else:
         esin_phi1 = -np.sqrt(1.0-ecos_phi1**2)
 
-    ecos_phi2 = (el2**2+eL**2-el1**2)/2./el2/eL
+    ecos_phi2 = (gl2**2+eL**2-el1**2)/2./gl2/eL
     esin_phi2 = np.sqrt(1.-ecos_phi2**2)
 
     if(esgn_phi12<0):
@@ -190,10 +191,11 @@ def cf(xa,xl1,xL,xcos_phi1,xsgn_phi12):
 
     xsgn_phi21 = -xsgn_phi12
     xl2 = int(np.sqrt(xL**2+xl1**2-2*xl1*xL*xcos_phi1)) #value of l2 from triangle relation
+    fl2 = np.sqrt(xL**2+xl1**2-2*xl1*xL*xcos_phi1) #float l2
     if((xl2==0) or (xl2==1)):
         cf = 0.0 #avoid these multiples
         return cf
-    xcos_phi2 = (xl2**2+xL**2-xl1**2)/2./xl2/xL
+    xcos_phi2 = (fl2**2+xL**2-xl1**2)/2./fl2/xL
     
     if(xa == 1):   #TT
         cf = fa(xa,xl1,xL,xcos_phi1,xsgn_phi12)/2.0/lCl_tt(xl1)/lCl_tt(xl2)
