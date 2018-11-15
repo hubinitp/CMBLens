@@ -24,20 +24,25 @@ arcmin_to_radian = np.pi/180.0/60.0
 #[\mu K]
 T_CMB = 2.728E6
 #Planck noise [\mu K*arcmin]
-D_T_arcmin = 35.4 #27.0
-D_P_arcmin = 63.1 #40.0*np.sqrt(2)
+#D_T_arcmin = 35.4 #27.0
+#D_P_arcmin = 63.1 #40.0*np.sqrt(2)
 #Almost perfect noise [\mu K*arcmin]
 #D_T_arcmin = 1.0
 #D_P_arcmin = 1.0*np.sqrt(2)
+#AliCPT noise [\mu K*arcmin]
+D_T_arcmin = 9.0
+D_P_arcmin = 9.0*np.sqrt(2)
 
 #noise [\mu K*rad]
 D_T = D_T_arcmin / arcmin_to_radian
 D_P = D_P_arcmin / arcmin_to_radian
 
 #Planck FWHM of the beam [arcmin]
-fwmh_arcmin = 7.0
+#fwmh_arcmin = 7.0
 #Almost perfect FWHM of the beam [arcmin]
 #fwmh_arcmin = 4.0
+#AliCPT FWHM of the beam [arcmin]
+fwmh_arcmin = 12.0
 
 fwmh = fwmh_arcmin * arcmin_to_radian
 
@@ -48,7 +53,8 @@ lensed_spectra_filename = './data/lcdm_lensedtotCls.dat'
 lens_potential_filename = './data/lcdm_lenspotentialCls.dat'
 
 #output_filename = 'new_planck_tt_noise2.dat'
-output_filename = 'new_planck_noise2.dat'
+#output_filename = 'new_planck_noise2.dat'
+output_filename = 'alicpt_noise.dat'
 
 
 #unlensed spectra
