@@ -402,66 +402,66 @@ def compute_Noise_mat(L):
 
     return Noise_mat
 
-#mv Noise
-def mv_Noise(L):
+#Diagonal Noise + mv Noise
+def Lensing_Noise(L):
     '''
     L: (int) L module
     '''
 
-
+    Lensing_Noise = np.zeros(6)
+    
     Noise_Matrix = [[0 for x in range(5)] for y in range(5)]
     Noise_Matrix = compute_Noise_mat(L)
-    print('Noise_Matrix',Noise_Matrix)
+    #print('Noise_Matrix',Noise_Matrix)
 
     Inverse_Noise_Matrix = inv(Noise_Matrix)
-    print('Inverse_Noise_Matrix',Inverse_Noise_Matrix)
+    #print('Inverse_Noise_Matrix',Inverse_Noise_Matrix)
     
     mv_Noise = np.sum(Inverse_Noise_Matrix)
     mv_Noise = 1./mv_Noise
+    
+    for i in range(5):
+        Lensing_Noise[i] = Noise_Matrix[i][i]
+    
+    Lensing_Noise[5] = mv_Noise
 
-    return mv_Noise
-
-test = mv_Noise(3)
-print('mv_Noise',test)
-
-quit()
+    return Lensing_Noise
 
 #output Noise
 #N_aa=Aa term, for test
 L_min = ell_lens_min
 L_max = ell_lens_max
-L_array = np.zeros(L_max-L_min+1)
-Ntt_array = np.zeros(L_max-L_min+1)
-Nte_array = np.zeros(L_max-L_min+1)
-Ntb_array = np.zeros(L_max-L_min+1)
-Nee_array = np.zeros(L_max-L_min+1)
-Neb_array = np.zeros(L_max-L_min+1)
-op_row = np.zeros(6)
 l_range = range(L_min,L_max+1,1)
 
 def NoiseOutPut(yL):
+    '''
+    yL: (int) L module
+    '''
+    
     op_data = open(output_filename,'a')
+    
     print('L=',yL)
-    L_array[yL-L_min] = yL
-    Ntt_array[yL-L_min] = Aa(yL,1) #N_tt
-    Nte_array[yL-L_min] = Aa(yL,2) #N_te
-    Ntb_array[yL-L_min] = Aa(yL,3) #N_tb
-    Nee_array[yL-L_min] = Aa(yL,4) #N_ee
-    Neb_array[yL-L_min] = Aa(yL,5) #N_eb
-    op_row[0] = L_array[yL-L_min]
-    op_row[1] = Ntt_array[yL-L_min]
-    op_row[2] = Nte_array[yL-L_min]
-    op_row[3] = Ntb_array[yL-L_min]
-    op_row[4] = Nee_array[yL-L_min]
-    op_row[5] = Neb_array[yL-L_min]
+    op_row = np.zeros(7)
+    iLensing_Noise = np.zeros(6)
+
+    iLensing_Noise = Lensing_Noise(yL)
+    
+    op_row[0] = yL
+    op_row[1] = iLensing_Noise[0] #N_tt
+    op_row[2] = iLensing_Noise[1] #N_te
+    op_row[3] = iLensing_Noise[2] #N_tb
+    op_row[4] = iLensing_Noise[3] #N_ee
+    op_row[5] = iLensing_Noise[4] #N_eb
+    op_row[6] = iLensing_Noise[5] #N_mv
+    
     np.savetxt(op_data, op_row.reshape(1, op_row.shape[0]), fmt='%1.4e')
+    
     op_data.close()
+    
     return None
 
 #parallel the Noise output part
 num_cores = multiprocessing.cpu_count()
 Parallel(n_jobs=num_cores)(delayed(NoiseOutPut)(zL) for zL in l_range)
-
-
 
 exit()
