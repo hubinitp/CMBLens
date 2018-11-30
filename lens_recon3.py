@@ -55,7 +55,7 @@ lens_potential_filename = './data/lcdm_lenspotentialCls.dat'
 
 #output_filename = 'new_planck_tt_noise2.dat'
 #output_filename = 'new_planck_noise2.dat'
-output_filename = 'alicpt_noise.dat'
+output_filename = 'alicpt_noise2.dat'
 
 
 #unlensed spectra
