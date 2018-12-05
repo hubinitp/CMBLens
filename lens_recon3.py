@@ -18,6 +18,7 @@ ell_lens_max = 1000
 integral_ell_min = 2
 integral_ell_max = 1500
 tol = 1.0e-9
+camb_output_unit = 7.4311e12 #camb output is in [uK^2], not the dimensionless
 
 #noise params
 #arcmin_to_radian
@@ -35,8 +36,11 @@ D_P_arcmin = 40.0*np.sqrt(2) #63.1 #40.0*np.sqrt(2)
 #D_P_arcmin = 9.0*np.sqrt(2)
 
 #noise [\mu K*rad]
-D_T = D_T_arcmin / arcmin_to_radian
-D_P = D_P_arcmin / arcmin_to_radian
+#D_T = D_T_arcmin / arcmin_to_radian
+#D_P = D_P_arcmin / arcmin_to_radian
+
+D_T = D_T_arcmin * arcmin_to_radian
+D_P = D_P_arcmin * arcmin_to_radian
 
 #Planck FWHM of the beam [arcmin]
 fwmh_arcmin = 7.0
@@ -86,15 +90,15 @@ for el in range(2,l_le_max+1):
     N_BB[el-2] = ((D_P/T_CMB)**2)*np.exp(el*(el+1.0)*(fwmh**2)/8.0/np.log(2.0))
 
 #remove the ell scaling
-un_Cl[:,1] = un_Cl[:,1]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #TT
-un_Cl[:,2] = un_Cl[:,2]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #EE
-un_Cl[:,3] = un_Cl[:,3]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #BB
-un_Cl[:,4] = un_Cl[:,4]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi #TE
+un_Cl[:,1] = un_Cl[:,1]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #TT
+un_Cl[:,2] = un_Cl[:,2]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #EE
+un_Cl[:,3] = un_Cl[:,3]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #BB
+un_Cl[:,4] = un_Cl[:,4]/un_Cl[:,0]/(un_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #TE
 
-le_Cl[:,1] = le_Cl[:,1]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #TT
-le_Cl[:,2] = le_Cl[:,2]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #EE
-le_Cl[:,3] = le_Cl[:,3]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #BB
-le_Cl[:,4] = le_Cl[:,4]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi #TE
+le_Cl[:,1] = le_Cl[:,1]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #TT
+le_Cl[:,2] = le_Cl[:,2]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #EE
+le_Cl[:,3] = le_Cl[:,3]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #BB
+le_Cl[:,4] = le_Cl[:,4]/le_Cl[:,0]/(le_Cl[:,0]+1)*2.0*np.pi/camb_output_unit #TE
 
 '''
 np.savetxt('try3.dat', un_Cl, fmt='%1.4e')
