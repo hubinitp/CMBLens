@@ -7,9 +7,9 @@
 import numpy as np
 
 #noise spectra name
-noise_spectra_filename = './alicpt_noise3.dat'
+#noise_spectra_filename = './alicpt_noise3.dat'
 #noise_spectra_filename = './planck_noise_mv2.dat'
-#noise_spectra_filename = './ideal_noise_mv.dat'
+noise_spectra_filename = './ideal_noise_mv2.dat'
 #signal spectra name
 signal_spectra_filename = './data/lcdm_lenspotentialCls.dat'
 
